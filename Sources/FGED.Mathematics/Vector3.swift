@@ -3,6 +3,16 @@ import RealModule
 public struct Vector3<T: SIMDScalar & FloatingPoint>: Equatable {
     var storage: SIMD3<T>
     
+    @inlinable
+    public static var one: Vector3 {
+        return Vector3(T(1), T(1), T(1))
+    }
+    
+    @inlinable
+    public static var zero: Vector3 {
+        return Vector3()
+    }
+    
     public var x: T {
         get { storage.x }
         set { storage.x = newValue }
@@ -46,16 +56,6 @@ public struct Vector3<T: SIMDScalar & FloatingPoint>: Equatable {
     @inlinable
     public func normalize() -> Vector3 {
         return self / magnitude()
-    }
-
-    @inlinable
-    public static func ones() -> Vector3 {
-        return Vector3(T(1), T(1), T(1))
-    }
-    
-    @inlinable
-    public static func zeroes() -> Vector3 {
-        return Vector3()
     }
 }
 

@@ -18,28 +18,28 @@ final class FGED_MathematicsTests: XCTestCase {
     }
     
     func testOnes() {
-        let v = Vector3<Double>.ones()
+        let v = Vector3<Double>.one
         XCTAssertEqual(v.x, 1.0)
         XCTAssertEqual(v.y, 1.0)
         XCTAssertEqual(v.z, 1.0)
     }
     
     func testZeroes() {
-        let v = Vector3<Double>.zeroes()
+        let v = Vector3<Double>.zero
         XCTAssertEqual(v.x, 0.0)
         XCTAssertEqual(v.y, 0.0)
         XCTAssertEqual(v.z, 0.0)
     }
     
     func testScalarMultiplication() {
-        let v = Vector3<Double>.ones() * 2.0
+        let v = Vector3<Double>.one * 2.0
         XCTAssertEqual(v.x, 2.0)
         XCTAssertEqual(v.y, 2.0)
         XCTAssertEqual(v.z, 2.0)
     }
     
     func testScalarDivision() {
-        let v = Vector3<Double>.ones() / 2.0
+        let v = Vector3<Double>.one / 2.0
         XCTAssertEqual(v.x, 0.5)
         XCTAssertEqual(v.y, 0.5)
         XCTAssertEqual(v.z, 0.5)
@@ -67,7 +67,7 @@ final class FGED_MathematicsTests: XCTestCase {
         let u = Vector3(1.0, 2.0, 3.0)
         let v = Vector3(4.0, 5.0, 6.0)
         XCTAssertEqual(u + v, Vector3(u.x + v.x, u.y + v.y, u.z + v.z))
-        XCTAssertEqual(u - u, Vector3.zeroes())
+        XCTAssertEqual(u - u, Vector3.zero)
     }
     
     func testVectorSubstraction() {
@@ -77,7 +77,7 @@ final class FGED_MathematicsTests: XCTestCase {
         XCTAssertEqual(u + u, u * 2.0)
         XCTAssertEqual(u + u, 2.0 * u)
     }
-
+    
     static var allTests = [
         ("testDefaultInitializer", testDefaultInitializer),
         ("testInitializer", testInitializer)
