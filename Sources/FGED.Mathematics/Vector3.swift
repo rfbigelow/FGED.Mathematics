@@ -1,36 +1,36 @@
 import RealModule
 
-struct Vector3<T: SIMDScalar & FloatingPoint> {
+public struct Vector3<T: SIMDScalar & FloatingPoint>: Equatable {
     var storage: SIMD3<T>
     
-    var x: T {
+    public var x: T {
         get { storage.x }
         set { storage.x = newValue }
     }
     
-    var y: T {
+    public var y: T {
         get { storage.y }
         set { storage.y = newValue }
     }
     
-    var z: T {
+    public var z: T {
         get { storage.z }
         set { storage.z = newValue }
     }
     
-    init() {
+    public init() {
         storage = SIMD3()
     }
     
-    init(_ a: T, _ b: T, _ c: T) {
+    public init(_ a: T, _ b: T, _ c: T) {
         storage = SIMD3(a, b, c)
     }
     
-    init(_ simd: SIMD3<T>) {
+    public init(_ simd: SIMD3<T>) {
         self.storage = simd
     }
     
-    subscript(index: Int) -> T {
+    public subscript(index: Int) -> T {
         get {
             return storage[index];
         }
@@ -39,32 +39,58 @@ struct Vector3<T: SIMDScalar & FloatingPoint> {
         }
     }
     
-    func magnitude() -> T {
+    public func magnitude() -> T {
         return (storage * storage).sum().squareRoot()
     }
     
-    func normalize() -> Vector3 {
+    @inlinable
+    public func normalize() -> Vector3 {
         return self / magnitude()
     }
-}
 
-extension Vector3 {
-    static func ones() -> Vector3 {
+    @inlinable
+    public static func ones() -> Vector3 {
         return Vector3(T(1), T(1), T(1))
     }
     
-    static func zeroes() -> Vector3 {
+    @inlinable
+    public static func zeroes() -> Vector3 {
         return Vector3()
     }
 }
 
 extension Vector3 {
-    static func * (v: Vector3, s: T) -> Vector3 {
+    public static func * (v: Vector3, s: T) -> Vector3 {
         return Vector3(v.storage * s)
     }
     
-    static func / (v: Vector3, s: T) -> Vector3 {
+    @inlinable
+    public static func / (v: Vector3, s: T) -> Vector3 {
         let inverse = T(1) / s
-        return Vector3(v.storage * inverse)
+        return v * inverse
+    }
+    
+    public static func + (left: Vector3, right: Vector3) -> Vector3 {
+        return Vector3(left.storage + right.storage)
+    }
+    
+    public static func - (left: Vector3, right: Vector3) -> Vector3 {
+        return Vector3(left.storage - right.storage)
+    }
+    
+    public static prefix func - (v: Vector3) -> Vector3 {
+        return Vector3(-v.storage)
+    }
+}
+
+extension Float32 {
+    static func * (s: Float32, v: Vector3<Float32>) -> Vector3<Float32> {
+        return v * s
+    }
+}
+
+extension Float64 {
+    static func * (s: Float64, v: Vector3<Float64>) -> Vector3<Float64> {
+        return v * s
     }
 }

@@ -45,6 +45,13 @@ final class FGED_MathematicsTests: XCTestCase {
         XCTAssertEqual(v.z, 0.5)
     }
     
+    func testPrefixUnaryMinus() {
+        let u = Vector3(1.0, 2.0, 3.0)
+        let v = -u
+        let expected = u * -1.0
+        XCTAssertEqual(v, expected)
+    }
+    
     func testMagnitude()  {
         let x = 1.0, y = 2.0, z = 3.0
         let v = Vector3(x, y, z)
@@ -53,12 +60,24 @@ final class FGED_MathematicsTests: XCTestCase {
     
     func testNormalize() {
         let v = Vector3(3.0, 3.0, 3.0).normalize()
-        XCTAssertEqual(v.x, 1.0)
-        XCTAssertEqual(v.y, 1.0)
-        XCTAssertEqual(v.z, 1.0)
         XCTAssertEqual(v.magnitude(), 1.0)
     }
     
+    func testVectorAddition() {
+        let u = Vector3(1.0, 2.0, 3.0)
+        let v = Vector3(4.0, 5.0, 6.0)
+        XCTAssertEqual(u + v, Vector3(u.x + v.x, u.y + v.y, u.z + v.z))
+        XCTAssertEqual(u - u, Vector3.zeroes())
+    }
+    
+    func testVectorSubstraction() {
+        let u = Vector3(1.0, 2.0, 3.0)
+        let v = Vector3(4.0, 5.0, 6.0)
+        XCTAssertEqual(u - v, Vector3(u.x - v.x, u.y - v.y, u.z - v.z))
+        XCTAssertEqual(u + u, u * 2.0)
+        XCTAssertEqual(u + u, 2.0 * u)
+    }
+
     static var allTests = [
         ("testDefaultInitializer", testDefaultInitializer),
         ("testInitializer", testInitializer)
