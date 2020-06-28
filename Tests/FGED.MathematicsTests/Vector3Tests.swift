@@ -78,6 +78,13 @@ final class Vector3Tests: XCTestCase {
         XCTAssertEqual(u + u, 2.0 * u)
     }
     
+    func testDotProduct() {
+        let u = Vector3(1.0, 2.0, 3.0)
+        let v = Vector3(2.0, 3.0, 4.0)
+        let result = u .* v
+        XCTAssertEqual(result, 20.0)
+    }
+    
     static var allTests = [
         ("testDefaultInitializer", testDefaultInitializer),
         ("testInitializer", testInitializer)

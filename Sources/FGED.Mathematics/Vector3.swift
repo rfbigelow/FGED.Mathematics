@@ -80,6 +80,13 @@ extension Vector3 {
     
     public static prefix func - (v: Vector3) -> Vector3 {
         return Vector3(-v.storage)
+    }   
+}
+
+infix operator .* : MultiplicationPrecedence
+extension Vector3 {
+    public static func .* (left: Vector3, right: Vector3) -> T {
+        return (left.storage * right.storage).sum()
     }
 }
 
