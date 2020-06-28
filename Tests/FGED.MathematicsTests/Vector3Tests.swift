@@ -1,7 +1,7 @@
 import XCTest
 @testable import FGED_Mathematics
 
-final class FGED_MathematicsTests: XCTestCase {
+final class Vector3Tests: XCTestCase {
     func testDefaultInitializer() {
         let v = Vector3<Float>()
         XCTAssertEqual(v.x, Float(0.0))
