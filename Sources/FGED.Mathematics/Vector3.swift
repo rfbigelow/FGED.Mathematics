@@ -1,7 +1,7 @@
 import RealModule
 
 public struct Vector3<T: SIMDScalar & FloatingPoint>: Equatable {
-    var storage: SIMD3<T>
+    let storage: SIMD3<T>
     
     @inlinable
     public static var one: Vector3 {
@@ -29,18 +29,15 @@ public struct Vector3<T: SIMDScalar & FloatingPoint>: Equatable {
     }
 
     public var x: T {
-        get { storage.x }
-        set { storage.x = newValue }
+        return storage.x
     }
     
     public var y: T {
-        get { storage.y }
-        set { storage.y = newValue }
+        return storage.y
     }
     
     public var z: T {
-        get { storage.z }
-        set { storage.z = newValue }
+        return storage.z
     }
     
     public init() {
@@ -56,12 +53,7 @@ public struct Vector3<T: SIMDScalar & FloatingPoint>: Equatable {
     }
     
     public subscript(index: Int) -> T {
-        get {
-            return storage[index];
-        }
-        set {
-            storage[index] = newValue
-        }
+        return storage[index];
     }
     
     public func magnitude() -> T {
