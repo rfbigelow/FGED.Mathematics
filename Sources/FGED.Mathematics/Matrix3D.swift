@@ -6,7 +6,7 @@
 //
 
 public struct Matrix3D<T: SIMDScalar & FloatingPoint>: Equatable {
-    var storage: [SIMD3<T>]
+    let storage: [SIMD3<T>]
     
     @inlinable
     public static var identity: Matrix3D {
