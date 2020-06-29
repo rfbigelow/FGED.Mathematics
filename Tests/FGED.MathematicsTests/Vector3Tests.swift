@@ -81,8 +81,69 @@ final class Vector3Tests: XCTestCase {
     func testDotProduct() {
         let u = Vector3(1.0, 2.0, 3.0)
         let v = Vector3(2.0, 3.0, 4.0)
-        let result = u .* v
+        let result = u.dotProduct(v)
         XCTAssertEqual(result, 20.0)
+    }
+    
+    func testCrossProduct() {
+        let u = Vector3(1.0, 2.0, 3.0)
+        let v = Vector3(2.0, 3.0, 4.0)
+        let result = u.crossProduct(v)
+        XCTAssertEqual(result, Vector3(u.y * v.z - u.z * v.y,
+                                       u.z * v.x - u.x * v.z,
+                                       u.x * v.y - u.y * v.x))
+    }
+    
+    func testDotAndCrossProducts() {
+        let a = Vector3(1.0, 2.0, 3.0)
+        let b = Vector3(2.0, 3.0, 4.0)
+        let result1 = a.dotProduct(a.crossProduct(b))
+        let result2 = b.dotProduct(a.crossProduct(b))
+        XCTAssertEqual(result1, 0.0)
+        XCTAssertEqual(result1, result2)
+    }
+    
+    func testCrossProductMagnitude() {
+        let a = Vector3(2.0, 0.0, 0.0)
+        let b = Vector3(0.0, 2.0, 0.0)
+        XCTAssertEqual(a.crossProduct(b).magnitude(), a.magnitude() * b.magnitude() * sin(Double.pi / 2))
+    }
+    
+    func testCrossProductAnticommutivaty() {
+        let a = Vector3(1.0, 2.0, 3.0)
+        let b = Vector3(2.0, 3.0, 4.0)
+        XCTAssertEqual(a.crossProduct(b), -b.crossProduct(a))
+    }
+    
+    func testVectorTripleProduct() {
+        let a = Vector3(1.0, 2.0, 3.0)
+        let b = Vector3(2.0, 3.0, 4.0)
+        let c = Vector3(5.0, 4.0, 3.0)
+        XCTAssertEqual(a.crossProduct(b.crossProduct(c)), b * a.dotProduct(c) - c * a.dotProduct(b))
+    }
+    
+    func testScalarTripleProduct() {
+        let a = Vector3(1.0, 2.0, 3.0)
+        let b = Vector3(2.0, 3.0, 4.0)
+        let c = Vector3(5.0, 4.0, 3.0)
+        let result = scalarTripleProduct(a, b, c)
+        XCTAssertEqual(result, b.crossProduct(c).dotProduct(a))
+    }
+    
+    func testProjection() {
+        let v = Vector3(2.0, 3.0, 4.0)
+        let px = v.project(onto: Vector3<Double>.i)
+        let py = v.project(onto: Vector3<Double>.j)
+        let pz = v.project(onto: Vector3<Double>.k)
+        XCTAssertEqual(px + py + pz, v)
+    }
+    
+    func testRejection() {
+        let a = Vector3(2.0, 3.0, 4.0)
+        let b = Vector3(3.0, 4.0, 5.0)
+        let rejection = a.reject(from: b)
+        XCTAssertNotEqual(a.dotProduct(b), 0.0)
+        XCTAssertEqual(rejection.dotProduct(b), 0.0)
     }
     
     static var allTests = [

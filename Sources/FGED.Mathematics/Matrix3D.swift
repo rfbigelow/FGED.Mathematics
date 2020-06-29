@@ -8,6 +8,15 @@
 public struct Matrix3D<T: SIMDScalar & FloatingPoint>: Equatable {
     var storage: [SIMD3<T>]
     
+    @inlinable
+    public static var identity: Matrix3D {
+        return Matrix3D(
+            T(1), T(0), T(0),
+            T(0), T(1), T(0),
+            T(0), T(0), T(1)
+        )
+    }
+    
     public init() {
         storage = Array(repeating: SIMD3<T>(), count: 3)
     }

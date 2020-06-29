@@ -96,4 +96,10 @@ final class Matrix3DTests: XCTestCase {
                                m[2, 0] * v.x + m[2, 1] * v.y + m[2, 2] * v.z)
         XCTAssertEqual(result, expected)
     }
+    
+    func testIdentity() {
+        let m = Matrix3D(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)
+        let i = Matrix3D<Double>.identity
+        XCTAssertEqual(m * i, m)
+    }
 }
