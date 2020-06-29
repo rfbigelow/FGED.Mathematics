@@ -80,6 +80,7 @@ extension Matrix3D {
         return Matrix3D([m.storage[0] * s, m.storage[1] * s, m.storage[2] * s])
     }
     
+    @inlinable
     static func * (left: Matrix3D, right: Matrix3D) -> Matrix3D {
         return Matrix3D(
             left[0, 0] * right[0, 0] + left[0, 1] * right[1, 0] + left[0, 2] * right[2, 0],
@@ -94,6 +95,7 @@ extension Matrix3D {
         )
     }
     
+    @inlinable
     static func * (m: Matrix3D, v: Vector3<T>) -> Vector3<T> {
         return (m[0] * v.x) + (m[1] * v.y) + (m[2] * v.z)
     }
