@@ -102,4 +102,17 @@ final class Matrix3DTests: XCTestCase {
         let i = Matrix3D<Double>.identity
         XCTAssertEqual(m * i, m)
     }
+    
+    func testInverse() {
+        let m = Matrix3D(1.0, 0.0, 0.0, 4.0, 1.0, 0.0, 0.0, 5.0, 1.0)
+        let mInverse = m.inverse
+        let i = Matrix3D<Double>.identity
+        let result1 = m * mInverse
+        XCTAssertEqual(result1, i)
+        
+        let result2 = mInverse * m
+        XCTAssertEqual(result2, i)
+        
+        XCTAssertEqual(i.inverse, i)
+    }
 }

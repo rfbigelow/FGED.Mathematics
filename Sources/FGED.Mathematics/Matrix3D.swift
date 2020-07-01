@@ -17,6 +17,23 @@ public struct Matrix3D<T: SIMDScalar & FloatingPoint>: Equatable {
         )
     }
     
+    public var inverse: Matrix3D {
+        let a = self[0]
+        let b = self[1]
+        let c = self[2]
+        
+        let r0 = b.crossProduct(c)
+        let r1 = c.crossProduct(a)
+        let r2 = a.crossProduct(b)
+        
+        let invDet = T(1) / r2.dotProduct(c)
+        
+        return Matrix3D(
+            r0.x, r0.y, r0.z,
+            r1.x, r1.y, r1.z,
+            r2.x, r2.y, r2.z) * invDet
+    }
+    
     public init() {
         storage = Array(repeating: SIMD3<T>(), count: 3)
     }
