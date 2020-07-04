@@ -1,6 +1,6 @@
 import RealModule
 
-public struct Vector3<T: SIMDScalar & FloatingPoint>: Equatable {
+public struct Vector3<T: SIMDScalar & Real>: Equatable {
     let storage: SIMD3<T>
     
     @inlinable
@@ -91,6 +91,10 @@ extension Vector3 {
     
     public static prefix func - (v: Vector3) -> Vector3 {
         return Vector3(-v.storage)
+    }
+
+    public static func *(left: Vector3, right: Vector3) -> Vector3 {
+        return Vector3(left.storage * right.storage)
     }
 }
 

@@ -115,4 +115,41 @@ final class Matrix3DTests: XCTestCase {
         
         XCTAssertEqual(i.inverse, i)
     }
+    
+    func testMatrixRotationX(){
+        let v = Vector3(0.0, 2.0, 0.0)
+        let rotX90 = Matrix3D.makeRotationX(radians: Double.pi / 2.0)
+        let rotated = rotX90 * v
+        XCTAssertEqual(rotated.z, v.y)
+    }
+
+    func testMatrixRotationY(){
+        let v = Vector3(0.0, 0.0, 2.0)
+        let rotX90 = Matrix3D.makeRotationY(radians: Double.pi / 2.0)
+        let rotated = rotX90 * v
+        XCTAssertEqual(rotated.x, v.z)
+    }
+    
+    func testMatrixRotationZ(){
+        let v = Vector3(2.0, 0.0, 0.0)
+        let rotX90 = Matrix3D.makeRotationZ(radians: Double.pi / 2.0)
+        let rotated = rotX90 * v
+        XCTAssertEqual(rotated.y, v.x)
+    }
+    
+    func testMatrixRotationArbitrary(){
+        let theta = Double.pi
+        let rotX = Matrix3D.makeRotationX(radians: theta)
+        let rotY = Matrix3D.makeRotationY(radians: theta)
+        let rotZ = Matrix3D.makeRotationZ(radians: theta)
+        
+        let resultX = Matrix3D.makeRotation(radians: theta, a: Vector3(1.0, 0.0, 0.0))
+        XCTAssertEqual(resultX, rotX)
+        
+        let resultY = Matrix3D.makeRotation(radians: theta, a: Vector3(0.0, 1.0, 0.0))
+        XCTAssertEqual(resultY, rotY)
+        
+        let resultZ = Matrix3D.makeRotation(radians: theta, a: Vector3(0.0, 0.0, 1.0))
+        XCTAssertEqual(resultZ, rotZ)
+    }
 }

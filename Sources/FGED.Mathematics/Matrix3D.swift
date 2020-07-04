@@ -5,7 +5,9 @@
 //  Created by Robert Bigelow on 6/27/20.
 //
 
-public struct Matrix3D<T: SIMDScalar & FloatingPoint>: Equatable {
+import RealModule
+
+public struct Matrix3D<T: SIMDScalar & Real>: Equatable {
     let storage: [SIMD3<T>]
     
     @inlinable
@@ -115,5 +117,58 @@ extension Matrix3D {
     @inlinable
     static func * (m: Matrix3D, v: Vector3<T>) -> Vector3<T> {
         return (m[0] * v.x) + (m[1] * v.y) + (m[2] * v.z)
+    }
+}
+
+extension Matrix3D {
+    static func makeRotationX(radians: T) -> Matrix3D {
+        let c = T.cos(radians)
+        let s = T.sin(radians)
+        return Matrix3D(
+            T(1), T(0), T(0),
+            T(0), c, -s,
+            T(0), s, c
+        )
+    }
+
+    static func makeRotationY(radians: T) -> Matrix3D {
+        let c = T.cos(radians)
+        let s = T.sin(radians)
+        return Matrix3D(
+            c, T(0), s,
+            T(0), T(1), T(0),
+            -s, T(0), c
+        )
+    }
+
+    static func makeRotationZ(radians: T) -> Matrix3D {
+        let c = T.cos(radians)
+        let s = T.sin(radians)
+        return Matrix3D(
+            c, -s, T(0),
+            s, c, T(0),
+            T(0), T(0), T(1)
+        )
+    }
+    
+    static func makeRotation(radians: T, a: Vector3<T>) -> Matrix3D {
+        let c = T.cos(radians)
+        let s = T.sin(radians)
+        let d = T(1) - c
+
+        let ad = a * d
+        let aad = a * ad
+        let sa = a * s
+
+        let axay = ad.x * a.y
+        let axaz = ad.x * a.z
+        let ayaz = ad.y * a.z
+        
+        
+        return Matrix3D(
+            c + aad.x, axay - sa.z, axaz + sa.y,
+            axay + sa.z, c + aad.y, ayaz - sa.x,
+            axaz - sa.y, ayaz + sa.x, c + aad.z
+        )
     }
 }
