@@ -95,6 +95,10 @@ extension Matrix3D {
         ])
     }
     
+    static prefix func - (m: Matrix3D) -> Matrix3D {
+        return Matrix3D([-m.storage[0], -m.storage[1], -m.storage[2]])
+    }
+    
     static func * (m: Matrix3D, s: T) -> Matrix3D {
         return Matrix3D([m.storage[0] * s, m.storage[1] * s, m.storage[2] * s])
     }
@@ -120,6 +124,7 @@ extension Matrix3D {
     }
 }
 
+// transforms
 extension Matrix3D {
     static func makeRotationX(radians: T) -> Matrix3D {
         let c = T.cos(radians)
@@ -152,6 +157,7 @@ extension Matrix3D {
     }
     
     static func makeRotation(radians: T, a: Vector3<T>) -> Matrix3D {
+        precondition(a.magnitude() == T(1))
         let c = T.cos(radians)
         let s = T.sin(radians)
         let d = T(1) - c
@@ -169,6 +175,36 @@ extension Matrix3D {
             c + aad.x, axay - sa.z, axaz + sa.y,
             axay + sa.z, c + aad.y, ayaz - sa.x,
             axaz - sa.y, ayaz + sa.x, c + aad.z
+        )
+    }
+    
+    static func makeReflection(a: Vector3<T>) -> Matrix3D {
+        precondition(a.magnitude() == T(1))
+        let minus2a = a * -T(2)
+        let minus2aSquared = a * minus2a
+        let axay = minus2a.x * a.y
+        let axaz = minus2a.x * a.z
+        let ayaz = minus2a.y * a.z
+        
+        return Matrix3D(
+            minus2aSquared.x + T(1), axay, axaz,
+            axay, minus2aSquared.y + T(1), ayaz,
+            axaz, ayaz, minus2aSquared.z + T(1)
+        )
+    }
+
+    static func makeInvolution(a: Vector3<T>) -> Matrix3D {
+        precondition(a.magnitude() == T(1))
+        let plus2a = a * T(2)
+        let plus2aSquared = a * plus2a
+        let axay = plus2a.x * a.y
+        let axaz = plus2a.x * a.z
+        let ayaz = plus2a.y * a.z
+        
+        return Matrix3D(
+            plus2aSquared.x - T(1), axay, axaz,
+            axay, plus2aSquared.y - T(1), ayaz,
+            axaz, ayaz, plus2aSquared.z - T(1)
         )
     }
 }

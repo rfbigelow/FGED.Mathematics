@@ -152,4 +152,20 @@ final class Matrix3DTests: XCTestCase {
         let resultZ = Matrix3D.makeRotation(radians: theta, a: Vector3(0.0, 0.0, 1.0))
         XCTAssertEqual(resultZ, rotZ)
     }
+    
+    func testReflection(){
+        let a = Vector3(1.0, 0.0, 0.0)
+        let v = Vector3(1.0, 0.0, 0.0)
+        let reflection = Matrix3D.makeReflection(a: a)
+        let reflected = reflection * v
+        XCTAssertEqual(reflected, -v)
+    }
+    
+    func testInvolution(){
+        let a = Vector3(1.0, 0.0, 0.0)
+        let reflection = Matrix3D.makeReflection(a: a)
+        let involution = Matrix3D.makeInvolution(a: a)
+        XCTAssertEqual(involution, -reflection)
+        XCTAssertEqual(involution * involution, Matrix3D.identity)
+    }
 }
