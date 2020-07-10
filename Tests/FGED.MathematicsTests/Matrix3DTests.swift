@@ -168,4 +168,30 @@ final class Matrix3DTests: XCTestCase {
         XCTAssertEqual(involution, -reflection)
         XCTAssertEqual(involution * involution, Matrix3D.identity)
     }
+    
+    func testScaling(){
+        let sx = 2.0
+        let sy = 3.0
+        let sz = 4.0
+        let expected = Matrix3D([Vector3(sx, 0, 0), Vector3(0, sy, 0), Vector3(0, 0, sz)])
+        let scaling = Matrix3D.makeScale(sx: sx, sy: sy, sz: sz)
+        XCTAssertEqual(scaling, expected)
+    }
+    
+    func testUniformScaling(){
+        let s = 2.0
+        let expected = Matrix3D.identity * s
+        let uniform = Matrix3D.makeUniformScale(s: s)
+        XCTAssertEqual(uniform, expected)
+    }
+    
+    func testScalingAlongVector(){
+        let s = 3.0
+        let v = Vector3(0.0, 1.0, 0.0)
+        let expected = Matrix3D(1.0, 0.0, 0.0,
+                                0.0, s, 0.0,
+                                0.0, 0.0, 1.0)
+        let scaling = Matrix3D.makeScale(s: s, a: v)
+        XCTAssertEqual(scaling, expected)
+    }
 }

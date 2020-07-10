@@ -126,6 +126,7 @@ extension Matrix3D {
 
 // transforms
 extension Matrix3D {
+    @inlinable
     static func makeRotationX(radians: T) -> Matrix3D {
         let c = T.cos(radians)
         let s = T.sin(radians)
@@ -136,6 +137,7 @@ extension Matrix3D {
         )
     }
 
+    @inlinable
     static func makeRotationY(radians: T) -> Matrix3D {
         let c = T.cos(radians)
         let s = T.sin(radians)
@@ -146,6 +148,7 @@ extension Matrix3D {
         )
     }
 
+    @inlinable
     static func makeRotationZ(radians: T) -> Matrix3D {
         let c = T.cos(radians)
         let s = T.sin(radians)
@@ -156,6 +159,7 @@ extension Matrix3D {
         )
     }
     
+    @inlinable
     static func makeRotation(radians: T, a: Vector3<T>) -> Matrix3D {
         precondition(a.magnitude() == T(1))
         let c = T.cos(radians)
@@ -178,6 +182,7 @@ extension Matrix3D {
         )
     }
     
+    @inlinable
     static func makeReflection(a: Vector3<T>) -> Matrix3D {
         precondition(a.magnitude() == T(1))
         let minus2a = a * -T(2)
@@ -193,6 +198,7 @@ extension Matrix3D {
         )
     }
 
+    @inlinable
     static func makeInvolution(a: Vector3<T>) -> Matrix3D {
         precondition(a.magnitude() == T(1))
         let plus2a = a * T(2)
@@ -206,5 +212,36 @@ extension Matrix3D {
             axay, plus2aSquared.y - T(1), ayaz,
             axaz, ayaz, plus2aSquared.z - T(1)
         )
+    }
+    
+    @inlinable
+    static func makeScale(sx: T, sy: T, sz: T) -> Matrix3D {
+        return Matrix3D(
+        sx, T(0), T(0),
+        T(0), sy, T(0),
+        T(0), T(0), sz
+        )
+    }
+        
+    @inlinable
+    static func makeScale(s: T, a: Vector3<T>) -> Matrix3D {
+        precondition(a.magnitude() == T(1))
+        let sMinus1 = s - T(1)
+        let sa = a * sMinus1
+        let axay = sa.x * a.y
+        let axaz = sa.x * a.z
+        let ayaz = sa.y * a.z
+        let sa2 = sa * a
+        
+        return Matrix3D(
+            sa2.x + T(1), axay, axaz,
+            axay, sa2.y + T(1), ayaz,
+            axaz, ayaz, sa2.z + T(1)
+        )
+    }
+
+    @inlinable
+    static func makeUniformScale(s: T) -> Matrix3D {
+        return makeScale(sx: s, sy: s, sz: s)
     }
 }
