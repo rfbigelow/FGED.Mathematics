@@ -244,4 +244,19 @@ extension Matrix3D {
     static func makeUniformScale(s: T) -> Matrix3D {
         return makeScale(sx: s, sy: s, sz: s)
     }
+    
+    @inlinable
+    static func makeSkew(radians: T, a: Vector3<T>, b: Vector3<T>) -> Matrix3D {
+        let tanTheta = T.tan(radians)
+        let aTanTheta = a * tanTheta
+        let abx = aTanTheta * b.x
+        let aby = aTanTheta * b.y
+        let abz = aTanTheta * b.z
+        
+        return Matrix3D(
+            abx.x + T(1), aby.x, abz.x,
+            abx.y, aby.y + T(1), abz.y,
+            abx.z, aby.z, abz.z + T(1)
+        )
+    }
 }

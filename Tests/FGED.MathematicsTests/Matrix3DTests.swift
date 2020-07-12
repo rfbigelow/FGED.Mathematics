@@ -194,4 +194,30 @@ final class Matrix3DTests: XCTestCase {
         let scaling = Matrix3D.makeScale(s: s, a: v)
         XCTAssertEqual(scaling, expected)
     }
+    
+    func testSkewAlongCoordinateAxes(){
+        let theta = Double.pi / 2
+        let mSkew = Matrix3D.makeSkew(radians: theta, a: Vector3.i, b: Vector3.j)
+        let expected = Matrix3D(1.0, Double.tan(theta), 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0)
+        XCTAssertEqual(mSkew, expected)
+    }
+    
+    func testSkew(){
+        let a = Vector3(1.0, 2.0, 3.0)
+        let b = Matrix3D.makeRotationZ(radians: Double.pi / 2) * a
+        let theta = Double.pi / 4
+        let mSkew = Matrix3D.makeSkew(radians: theta, a: a, b: b)
+        let expected = Matrix3D<Double>.identity + (a.outerProduct(b) * Double.tan(theta))
+        let diff = mSkew - expected
+        let tolerance = Double.ulpOfOne * 2
+        XCTAssertLessThanOrEqual(abs(diff[0,0]), tolerance)
+        XCTAssertLessThanOrEqual(abs(diff[0,1]), tolerance)
+        XCTAssertLessThanOrEqual(abs(diff[0,2]), tolerance)
+        XCTAssertLessThanOrEqual(abs(diff[1,0]), tolerance)
+        XCTAssertLessThanOrEqual(abs(diff[1,1]), tolerance)
+        XCTAssertLessThanOrEqual(abs(diff[1,2]), tolerance)
+        XCTAssertLessThanOrEqual(abs(diff[2,0]), tolerance)
+        XCTAssertLessThanOrEqual(abs(diff[2,1]), tolerance)
+        XCTAssertLessThanOrEqual(abs(diff[2,2]), tolerance)
+    }
 }
