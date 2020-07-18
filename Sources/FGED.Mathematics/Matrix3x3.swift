@@ -103,3 +103,140 @@ extension Matrix3x3 {
         return vx + vy + vz
     }
 }
+
+// transforms
+extension Matrix3x3 {
+    @inlinable
+    static func makeRotationX(radians: Scalar) -> Self {
+        let c = Scalar.cos(radians)
+        let s = Scalar.sin(radians)
+        return Self(
+            Scalar(1), Scalar(0), Scalar(0),
+            Scalar(0), c, -s,
+            Scalar(0), s, c
+        )
+    }
+
+    @inlinable
+    static func makeRotationY(radians: Scalar) -> Self {
+        let c = Scalar.cos(radians)
+        let s = Scalar.sin(radians)
+        return Self(
+            c, Scalar(0), s,
+            Scalar(0), Scalar(1), Scalar(0),
+            -s, Scalar(0), c
+        )
+    }
+
+    @inlinable
+    static func makeRotationZ(radians: Scalar) -> Self {
+        let c = Scalar.cos(radians)
+        let s = Scalar.sin(radians)
+        return Self(
+            c, -s, Scalar(0),
+            s, c, Scalar(0),
+            Scalar(0), Scalar(0), Scalar(1)
+        )
+    }
+    
+    @inlinable
+    static func makeRotation(radians: Scalar, a: Vector) -> Self {
+        precondition(a.magnitude() == Scalar(1))
+        let c = Scalar.cos(radians)
+        let s = Scalar.sin(radians)
+        let d = Scalar(1) - c
+
+        let ad = a * d
+        let aad = a * ad
+        let sa = a * s
+
+        let axay = ad.x * a.y
+        let axaz = ad.x * a.z
+        let ayaz = ad.y * a.z
+        
+        
+        return Self(
+            c + aad.x, axay - sa.z, axaz + sa.y,
+            axay + sa.z, c + aad.y, ayaz - sa.x,
+            axaz - sa.y, ayaz + sa.x, c + aad.z
+        )
+    }
+    
+    @inlinable
+    static func makeReflection(a: Vector) -> Self {
+        precondition(a.magnitude() == Scalar(1))
+        let minus2a = a * -Scalar(2)
+        let minus2aSquared = a * minus2a
+        let axay = minus2a.x * a.y
+        let axaz = minus2a.x * a.z
+        let ayaz = minus2a.y * a.z
+        
+        return Self(
+            minus2aSquared.x + Scalar(1), axay, axaz,
+            axay, minus2aSquared.y + Scalar(1), ayaz,
+            axaz, ayaz, minus2aSquared.z + Scalar(1)
+        )
+    }
+
+    @inlinable
+    static func makeInvolution(a: Vector) -> Self {
+        precondition(a.magnitude() == Scalar(1))
+        let plus2a = a * Scalar(2)
+        let plus2aSquared = a * plus2a
+        let axay = plus2a.x * a.y
+        let axaz = plus2a.x * a.z
+        let ayaz = plus2a.y * a.z
+        
+        return Self(
+            plus2aSquared.x - Scalar(1), axay, axaz,
+            axay, plus2aSquared.y - Scalar(1), ayaz,
+            axaz, ayaz, plus2aSquared.z - Scalar(1)
+        )
+    }
+    
+    @inlinable
+    static func makeScale(sx: Scalar, sy: Scalar, sz: Scalar) -> Self {
+        return Self(
+        sx, Scalar(0), Scalar(0),
+        Scalar(0), sy, Scalar(0),
+        Scalar(0), Scalar(0), sz
+        )
+    }
+        
+    @inlinable
+    static func makeScale(s: Scalar, a: Vector) -> Self {
+        precondition(a.magnitude() == Scalar(1))
+        let sMinus1 = s - Scalar(1)
+        let sa = a * sMinus1
+        let axay = sa.x * a.y
+        let axaz = sa.x * a.z
+        let ayaz = sa.y * a.z
+        let sa2 = sa * a
+        
+        return Self(
+            sa2.x + Scalar(1), axay, axaz,
+            axay, sa2.y + Scalar(1), ayaz,
+            axaz, ayaz, sa2.z + Scalar(1)
+        )
+    }
+
+    @inlinable
+    static func makeUniformScale(s: Scalar) -> Self {
+        return makeScale(sx: s, sy: s, sz: s)
+    }
+    
+    @inlinable
+    static func makeSkew(radians: Scalar, a: Vector, b: Vector) -> Self {
+        let tanScalarheta = Scalar.tan(radians)
+        let aScalaranScalarheta = a * tanScalarheta
+        let abx = aScalaranScalarheta * b.x
+        let aby = aScalaranScalarheta * b.y
+        let abz = aScalaranScalarheta * b.z
+        
+        return Self(
+            abx.x + Scalar(1), aby.x, abz.x,
+            abx.y, aby.y + Scalar(1), abz.y,
+            abx.z, aby.z, abz.z + Scalar(1)
+        )
+    }
+}
