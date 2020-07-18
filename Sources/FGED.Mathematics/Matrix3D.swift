@@ -7,164 +7,72 @@
 
 import RealModule
 
-public struct Matrix3D<T: SIMDScalar & Real>: Equatable {
-    let storage: [SIMD3<T>]
+struct Matrix3D<Vector: Vector3>: Matrix3x3, Equatable where Vector: Equatable {
+    let c0: Vector
+    let c1: Vector
+    let c2: Vector
     
-    @inlinable
-    public static var identity: Matrix3D {
-        return Matrix3D(
-            T(1), T(0), T(0),
-            T(0), T(1), T(0),
-            T(0), T(0), T(1)
-        )
+    init() {
+        self.init(Vector.zero, Vector.zero, Vector.zero)
     }
     
-    public var inverse: Matrix3D {
-        let a = self[0]
-        let b = self[1]
-        let c = self[2]
-        
-        let r0 = b.crossProduct(c)
-        let r1 = c.crossProduct(a)
-        let r2 = a.crossProduct(b)
-        
-        let invDet = T(1) / r2.dotProduct(c)
-        
-        return Matrix3D(
-            r0.x, r0.y, r0.z,
-            r1.x, r1.y, r1.z,
-            r2.x, r2.y, r2.z) * invDet
+    init(_ c0: Vector, _ c1: Vector, _ c2: Vector) {
+        self.c0 = c0; self.c1 = c1; self.c2 = c2
     }
     
-    public init() {
-        storage = Array(repeating: SIMD3<T>(), count: 3)
+    init(_ a00: Scalar, _ a01: Scalar, _ a02: Scalar, _ a10: Scalar, _ a11: Scalar, _ a12: Scalar, _ a20: Scalar, _ a21: Scalar, _ a22: Scalar) {
+        self.c0 = Vector(a00, a10, a20)
+        self.c1 = Vector(a01, a11, a21)
+        self.c2 = Vector(a02, a12, a22)
     }
     
-    public init(_ columns: [SIMD3<T>]) {
-        precondition(columns.count == 3)
-        self.storage = columns
-    }
-    
-    public init(_ columns: [Vector3<T>]) {
-        precondition(columns.count == 3)
-        self.storage = [columns[0].storage, columns[1].storage, columns[2].storage]
-    }
-    
-    public init(_ a00: T, _ a01: T, _ a02: T,
-                _ a10: T, _ a11: T, _ a12: T,
-                _ a20: T, _ a21: T, _ a22: T) {
-        self.storage = [
-            SIMD3(a00, a10, a20),
-            SIMD3(a01, a11, a21),
-            SIMD3(a02, a12, a22)
-        ]
-    }
-    
-    public init(_ rowMajor: [T]) {
-        precondition(rowMajor.count == 9)
-        self.storage = [
-            SIMD3([rowMajor[0], rowMajor[3], rowMajor[6]]),
-            SIMD3([rowMajor[1], rowMajor[4], rowMajor[7]]),
-            SIMD3([rowMajor[2], rowMajor[5], rowMajor[8]])
-        ]
-    }
-    
-    public subscript(index: Int) -> Vector3<T> {
-        return Vector3(storage[index])
-    }
-    
-    public subscript(r: Int, c: Int) -> T {
-        return storage[c][r]
-    }
-}
-
-extension Matrix3D {
-    static func + (left: Matrix3D, right: Matrix3D) -> Matrix3D {
-        return Matrix3D([
-            left.storage[0] + right.storage[0],
-            left.storage[1] + right.storage[1],
-            left.storage[2] + right.storage[2]
-        ])
-    }
-
-    static func - (left: Matrix3D, right: Matrix3D) -> Matrix3D {
-        return Matrix3D([
-            left.storage[0] - right.storage[0],
-            left.storage[1] - right.storage[1],
-            left.storage[2] - right.storage[2]
-        ])
-    }
-    
-    static prefix func - (m: Matrix3D) -> Matrix3D {
-        return Matrix3D([-m.storage[0], -m.storage[1], -m.storage[2]])
-    }
-    
-    static func * (m: Matrix3D, s: T) -> Matrix3D {
-        return Matrix3D([m.storage[0] * s, m.storage[1] * s, m.storage[2] * s])
-    }
-    
-    @inlinable
-    static func * (left: Matrix3D, right: Matrix3D) -> Matrix3D {
-        return Matrix3D(
-            left[0, 0] * right[0, 0] + left[0, 1] * right[1, 0] + left[0, 2] * right[2, 0],
-            left[0, 0] * right[0, 1] + left[0, 1] * right[1, 1] + left[0, 2] * right[2, 1],
-            left[0, 0] * right[0, 2] + left[0, 1] * right[1, 2] + left[0, 2] * right[2, 2],
-            left[1, 0] * right[0, 0] + left[1, 1] * right[1, 0] + left[1, 2] * right[2, 0],
-            left[1, 0] * right[0, 1] + left[1, 1] * right[1, 1] + left[1, 2] * right[2, 1],
-            left[1, 0] * right[0, 2] + left[1, 1] * right[1, 2] + left[1, 2] * right[2, 2],
-            left[2, 0] * right[0, 0] + left[2, 1] * right[1, 0] + left[2, 2] * right[2, 0],
-            left[2, 0] * right[0, 1] + left[2, 1] * right[1, 1] + left[2, 2] * right[2, 1],
-            left[2, 0] * right[0, 2] + left[2, 1] * right[1, 2] + left[2, 2] * right[2, 2]
-        )
-    }
-    
-    @inlinable
-    static func * (m: Matrix3D, v: Vector3<T>) -> Vector3<T> {
-        return (m[0] * v.x) + (m[1] * v.y) + (m[2] * v.z)
+    init(_ a: [Scalar]) {
+        precondition(a.count == 9)
+        self.init(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8])
     }
 }
 
 // transforms
 extension Matrix3D {
     @inlinable
-    static func makeRotationX(radians: T) -> Matrix3D {
-        let c = T.cos(radians)
-        let s = T.sin(radians)
+    static func makeRotationX(radians: Scalar) -> Matrix3D {
+        let c = Scalar.cos(radians)
+        let s = Scalar.sin(radians)
         return Matrix3D(
-            T(1), T(0), T(0),
-            T(0), c, -s,
-            T(0), s, c
+            Scalar(1), Scalar(0), Scalar(0),
+            Scalar(0), c, -s,
+            Scalar(0), s, c
         )
     }
 
     @inlinable
-    static func makeRotationY(radians: T) -> Matrix3D {
-        let c = T.cos(radians)
-        let s = T.sin(radians)
+    static func makeRotationY(radians: Scalar) -> Matrix3D {
+        let c = Scalar.cos(radians)
+        let s = Scalar.sin(radians)
         return Matrix3D(
-            c, T(0), s,
-            T(0), T(1), T(0),
-            -s, T(0), c
+            c, Scalar(0), s,
+            Scalar(0), Scalar(1), Scalar(0),
+            -s, Scalar(0), c
         )
     }
 
     @inlinable
-    static func makeRotationZ(radians: T) -> Matrix3D {
-        let c = T.cos(radians)
-        let s = T.sin(radians)
+    static func makeRotationZ(radians: Scalar) -> Matrix3D {
+        let c = Scalar.cos(radians)
+        let s = Scalar.sin(radians)
         return Matrix3D(
-            c, -s, T(0),
-            s, c, T(0),
-            T(0), T(0), T(1)
+            c, -s, Scalar(0),
+            s, c, Scalar(0),
+            Scalar(0), Scalar(0), Scalar(1)
         )
     }
     
     @inlinable
-    static func makeRotation(radians: T, a: Vector3<T>) -> Matrix3D {
-        precondition(a.magnitude() == T(1))
-        let c = T.cos(radians)
-        let s = T.sin(radians)
-        let d = T(1) - c
+    static func makeRotation(radians: Scalar, a: Vector3D<Scalar>) -> Matrix3D {
+        precondition(a.magnitude() == Scalar(1))
+        let c = Scalar.cos(radians)
+        let s = Scalar.sin(radians)
+        let d = Scalar(1) - c
 
         let ad = a * d
         let aad = a * ad
@@ -183,50 +91,50 @@ extension Matrix3D {
     }
     
     @inlinable
-    static func makeReflection(a: Vector3<T>) -> Matrix3D {
-        precondition(a.magnitude() == T(1))
-        let minus2a = a * -T(2)
+    static func makeReflection(a: Vector3D<Scalar>) -> Matrix3D {
+        precondition(a.magnitude() == Scalar(1))
+        let minus2a = a * -Scalar(2)
         let minus2aSquared = a * minus2a
         let axay = minus2a.x * a.y
         let axaz = minus2a.x * a.z
         let ayaz = minus2a.y * a.z
         
         return Matrix3D(
-            minus2aSquared.x + T(1), axay, axaz,
-            axay, minus2aSquared.y + T(1), ayaz,
-            axaz, ayaz, minus2aSquared.z + T(1)
+            minus2aSquared.x + Scalar(1), axay, axaz,
+            axay, minus2aSquared.y + Scalar(1), ayaz,
+            axaz, ayaz, minus2aSquared.z + Scalar(1)
         )
     }
 
     @inlinable
-    static func makeInvolution(a: Vector3<T>) -> Matrix3D {
-        precondition(a.magnitude() == T(1))
-        let plus2a = a * T(2)
+    static func makeInvolution(a: Vector3D<Scalar>) -> Matrix3D {
+        precondition(a.magnitude() == Scalar(1))
+        let plus2a = a * Scalar(2)
         let plus2aSquared = a * plus2a
         let axay = plus2a.x * a.y
         let axaz = plus2a.x * a.z
         let ayaz = plus2a.y * a.z
         
         return Matrix3D(
-            plus2aSquared.x - T(1), axay, axaz,
-            axay, plus2aSquared.y - T(1), ayaz,
-            axaz, ayaz, plus2aSquared.z - T(1)
+            plus2aSquared.x - Scalar(1), axay, axaz,
+            axay, plus2aSquared.y - Scalar(1), ayaz,
+            axaz, ayaz, plus2aSquared.z - Scalar(1)
         )
     }
     
     @inlinable
-    static func makeScale(sx: T, sy: T, sz: T) -> Matrix3D {
+    static func makeScale(sx: Scalar, sy: Scalar, sz: Scalar) -> Matrix3D {
         return Matrix3D(
-        sx, T(0), T(0),
-        T(0), sy, T(0),
-        T(0), T(0), sz
+        sx, Scalar(0), Scalar(0),
+        Scalar(0), sy, Scalar(0),
+        Scalar(0), Scalar(0), sz
         )
     }
         
     @inlinable
-    static func makeScale(s: T, a: Vector3<T>) -> Matrix3D {
-        precondition(a.magnitude() == T(1))
-        let sMinus1 = s - T(1)
+    static func makeScale(s: Scalar, a: Vector3D<Scalar>) -> Matrix3D {
+        precondition(a.magnitude() == Scalar(1))
+        let sMinus1 = s - Scalar(1)
         let sa = a * sMinus1
         let axay = sa.x * a.y
         let axaz = sa.x * a.z
@@ -234,29 +142,29 @@ extension Matrix3D {
         let sa2 = sa * a
         
         return Matrix3D(
-            sa2.x + T(1), axay, axaz,
-            axay, sa2.y + T(1), ayaz,
-            axaz, ayaz, sa2.z + T(1)
+            sa2.x + Scalar(1), axay, axaz,
+            axay, sa2.y + Scalar(1), ayaz,
+            axaz, ayaz, sa2.z + Scalar(1)
         )
     }
 
     @inlinable
-    static func makeUniformScale(s: T) -> Matrix3D {
+    static func makeUniformScale(s: Scalar) -> Matrix3D {
         return makeScale(sx: s, sy: s, sz: s)
     }
     
     @inlinable
-    static func makeSkew(radians: T, a: Vector3<T>, b: Vector3<T>) -> Matrix3D {
-        let tanTheta = T.tan(radians)
-        let aTanTheta = a * tanTheta
-        let abx = aTanTheta * b.x
-        let aby = aTanTheta * b.y
-        let abz = aTanTheta * b.z
+    static func makeSkew(radians: Scalar, a: Vector3D<Scalar>, b: Vector3D<Scalar>) -> Matrix3D {
+        let tanScalarheta = Scalar.tan(radians)
+        let aScalaranScalarheta = a * tanScalarheta
+        let abx = aScalaranScalarheta * b.x
+        let aby = aScalaranScalarheta * b.y
+        let abz = aScalaranScalarheta * b.z
         
         return Matrix3D(
-            abx.x + T(1), aby.x, abz.x,
-            abx.y, aby.y + T(1), abz.y,
-            abx.z, aby.z, abz.z + T(1)
+            abx.x + Scalar(1), aby.x, abz.x,
+            abx.y, aby.y + Scalar(1), abz.y,
+            abx.z, aby.z, abz.z + Scalar(1)
         )
     }
 }

@@ -1,146 +1,110 @@
 import RealModule
 
-public struct Vector3<T: SIMDScalar & Real>: Equatable {
-    let storage: SIMD3<T>
+protocol Vector3 {
+    associatedtype Scalar: Real & SIMDScalar
+    associatedtype Matrix: Matrix3x3 where Matrix.Vector == Self
     
-    @inlinable
-    public static var one: Vector3 {
-        return Vector3(T(1), T(1), T(1))
-    }
+    static var zero: Self { get }
+    static var one: Self { get }
     
-    @inlinable
-    public static var zero: Vector3 {
-        return Vector3()
-    }
+    static var i: Self { get }
+    static var j: Self { get }
+    static var k: Self { get }
     
-    @inlinable
-    public static var i: Vector3 {
-        return Vector3(T(1), T(0), T(0))
-    }
+    var storage: SIMD3<Scalar> { get }
     
-    @inlinable
-    public static var j: Vector3 {
-        return Vector3(T(0), T(1), T(0))
-    }
+    var x: Scalar { get }
+    var y: Scalar { get }
+    var z: Scalar { get }
     
-    @inlinable
-    public static var k: Vector3 {
-        return Vector3(T(0), T(0), T(1))
-    }
+    init(_ simd: SIMD3<Scalar>)
+    init(_ x: Scalar, _ y: Scalar, _ z: Scalar)
+    
+    subscript(index: Int) -> Scalar { get }
+    
+    func magnitude() -> Scalar
+    func normalize() -> Self
+    
+    func dotProduct(_ other: Self) -> Scalar
+    func crossProduct(_ other: Self) -> Self
+    func outerProduct(_ other: Self) -> Matrix
+    
+    func project(onto v: Self) -> Self
+    func reject(from v: Self) -> Self
+    
+    static func * (left: Self, right: Scalar) -> Self
+    static func / (left: Self, right: Scalar) -> Self
+    
+    static prefix func - (v: Self) -> Self
+    
+    static func + (left: Self, right: Self) -> Self
+    static func - (left: Self, right: Self) -> Self
+    static func * (left: Self, right: Self) -> Self
+}
 
-    public var x: T {
-        return storage.x
-    }
+extension Vector3 {
+    static var zero: Self { return Self(SIMD3.zero) }
+    static var one: Self { return Self(SIMD3.one) }
     
-    public var y: T {
-        return storage.y
-    }
+    static var i: Self { return Self(SIMD3<Scalar>(1, 0, 0)) }
+    static var j: Self { return Self(SIMD3<Scalar>(0, 1, 0)) }
+    static var k: Self { return Self(SIMD3<Scalar>(0, 0, 1)) }
+
+    var x: Scalar { return storage.x }
+    var y: Scalar { return storage.y }
+    var z: Scalar { return storage.z }
     
-    public var z: T {
-        return storage.z
-    }
+    subscript(index: Int) -> Scalar { return storage[index] }
     
-    public init() {
-        storage = SIMD3()
-    }
-    
-    public init(_ x: T, _ y: T, _ z: T) {
-        storage = SIMD3(x, y, z)
-    }
-    
-    public init(_ simd: SIMD3<T>) {
-        self.storage = simd
-    }
-    
-    public subscript(index: Int) -> T {
-        return storage[index];
-    }
-    
-    public func magnitude() -> T {
+    func magnitude() -> Scalar {
         return (storage * storage).sum().squareRoot()
     }
     
-    @inlinable
-    public func normalize() -> Vector3 {
-        return self / magnitude()
-    }
-}
-
-// scalar operators
-extension Vector3 {
-    public static func * (v: Vector3, s: T) -> Vector3 {
-        return Vector3(v.storage * s)
+    func normalize() -> Self {
+        return Self(self.storage / self.magnitude())
     }
     
-    @inlinable
-    public static func / (v: Vector3, s: T) -> Vector3 {
-        let inverse = T(1) / s
-        return v * inverse
-    }
-}
-
-// vector operators
-extension Vector3 {
-    public static func + (left: Vector3, right: Vector3) -> Vector3 {
-        return Vector3(left.storage + right.storage)
-    }
-    
-    public static func - (left: Vector3, right: Vector3) -> Vector3 {
-        return Vector3(left.storage - right.storage)
-    }
-    
-    public static prefix func - (v: Vector3) -> Vector3 {
-        return Vector3(-v.storage)
-    }
-
-    public static func *(left: Vector3, right: Vector3) -> Vector3 {
-        return Vector3(left.storage * right.storage)
-    }
-}
-
-// vector multiplication
-extension Vector3 {
-    public func dotProduct(_ other: Vector3) -> T {
+    func dotProduct(_ other: Self) -> Scalar {
         return (self.storage * other.storage).sum()
     }
 
-    @inlinable
-    public func crossProduct(_ other: Vector3) -> Vector3 {
-        return Vector3(SIMD3(y, z, x) * SIMD3(other.z, other.x, other.y) - SIMD3(z, x, y) * SIMD3(other.y, other.z, other.x))
+    func crossProduct(_ other: Self) -> Self {
+        return Self(self.storage.yzx * other.storage.zxy - self.storage.zxy * other.storage.yzx)
     }
     
-    public func outerProduct(_ other: Vector3) -> Matrix3D<T> {
-        return Matrix3D([self.storage * other.x, self.storage * other.y, self.storage * other.z])
+    func outerProduct(_ other: Self) -> Matrix {
+        return Matrix(self * other.x, self * other.y, self * other.z)
     }
-}
-
-public func scalarTripleProduct<T: SIMDScalar & FloatingPoint>(_ a: Vector3<T>, _ b: Vector3<T>, _ c: Vector3<T>) -> T {
-    return a.crossProduct(b).dotProduct(c)
-}
-
-// vector projection
-extension Vector3 {
-    @inlinable
-    public func project(onto v: Vector3) -> Vector3 {
+    
+    func project(onto v: Self) -> Self {
         return v * (self.dotProduct(v) / v.dotProduct(v))
     }
     
-    @inlinable
-    public func reject(from v: Vector3) -> Vector3 {
+    func reject(from v: Self) -> Self {
         return self - project(onto: v)
     }
-}
-
-extension Float32 {
-    @inlinable
-    static func * (s: Float32, v: Vector3<Float32>) -> Vector3<Float32> {
-        return v * s
+    
+    static func * (left: Self, right: Scalar) -> Self {
+        return Self(left.storage * right)
     }
-}
+    
+    static func / (left: Self, right: Scalar) -> Self {
+        return Self(left.storage / right)
+    }
+    
+    static prefix func - (v: Self) -> Self {
+        return Self(-v.storage)
+    }
+    
+    static func + (left: Self, right: Self) -> Self {
+        return Self(left.storage + right.storage)
+    }
+    
+    static func - (left: Self, right: Self) -> Self {
+        return Self(left.storage - right.storage)
+    }
 
-extension Float64 {
-    @inlinable
-    static func * (s: Float64, v: Vector3<Float64>) -> Vector3<Float64> {
-        return v * s
+    static func * (left: Self, right: Self) -> Self {
+        return Self(left.storage * right.storage)
     }
 }
