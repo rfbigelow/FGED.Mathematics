@@ -26,7 +26,7 @@ struct Vector3D<T: Real & SIMDScalar>: Vector3, Equatable {
 }
 
 func scalarTripleProduct<T: SIMDScalar & FloatingPoint>(_ a: Vector3D<T>, _ b: Vector3D<T>, _ c: Vector3D<T>) -> T {
-    return a.crossProduct(b).dotProduct(c)
+    return a.cross(b).dot(c)
 }
 
 extension Float32 {

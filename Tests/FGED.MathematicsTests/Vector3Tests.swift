@@ -81,14 +81,14 @@ final class Vector3Tests: XCTestCase {
     func testDotProduct() {
         let u = Vector3D(1.0, 2.0, 3.0)
         let v = Vector3D(2.0, 3.0, 4.0)
-        let result = u.dotProduct(v)
+        let result = u.dot(v)
         XCTAssertEqual(result, 20.0)
     }
     
     func testCrossProduct() {
         let u = Vector3D(1.0, 2.0, 3.0)
         let v = Vector3D(2.0, 3.0, 4.0)
-        let result = u.crossProduct(v)
+        let result = u.cross(v)
         XCTAssertEqual(result, Vector3D(u.y * v.z - u.z * v.y,
                                        u.z * v.x - u.x * v.z,
                                        u.x * v.y - u.y * v.x))
@@ -97,8 +97,8 @@ final class Vector3Tests: XCTestCase {
     func testDotAndCrossProducts() {
         let a = Vector3D(1.0, 2.0, 3.0)
         let b = Vector3D(2.0, 3.0, 4.0)
-        let result1 = a.dotProduct(a.crossProduct(b))
-        let result2 = b.dotProduct(a.crossProduct(b))
+        let result1 = a.dot(a.cross(b))
+        let result2 = b.dot(a.cross(b))
         XCTAssertEqual(result1, 0.0)
         XCTAssertEqual(result1, result2)
     }
@@ -106,20 +106,20 @@ final class Vector3Tests: XCTestCase {
     func testCrossProductMagnitude() {
         let a = Vector3D(2.0, 0.0, 0.0)
         let b = Vector3D(0.0, 2.0, 0.0)
-        XCTAssertEqual(a.crossProduct(b).magnitude(), a.magnitude() * b.magnitude() * sin(Double.pi / 2))
+        XCTAssertEqual(a.cross(b).magnitude(), a.magnitude() * b.magnitude() * sin(Double.pi / 2))
     }
     
     func testCrossProductAnticommutivaty() {
         let a = Vector3D(1.0, 2.0, 3.0)
         let b = Vector3D(2.0, 3.0, 4.0)
-        XCTAssertEqual(a.crossProduct(b), -b.crossProduct(a))
+        XCTAssertEqual(a.cross(b), -b.cross(a))
     }
     
     func testVectorTripleProduct() {
         let a = Vector3D(1.0, 2.0, 3.0)
         let b = Vector3D(2.0, 3.0, 4.0)
         let c = Vector3D(5.0, 4.0, 3.0)
-        XCTAssertEqual(a.crossProduct(b.crossProduct(c)), b * a.dotProduct(c) - c * a.dotProduct(b))
+        XCTAssertEqual(a.cross(b.cross(c)), b * a.dot(c) - c * a.dot(b))
     }
     
     func testScalarTripleProduct() {
@@ -127,7 +127,7 @@ final class Vector3Tests: XCTestCase {
         let b = Vector3D(2.0, 3.0, 4.0)
         let c = Vector3D(5.0, 4.0, 3.0)
         let result = scalarTripleProduct(a, b, c)
-        XCTAssertEqual(result, b.crossProduct(c).dotProduct(a))
+        XCTAssertEqual(result, b.cross(c).dot(a))
     }
     
     func testProjection() {
@@ -142,8 +142,8 @@ final class Vector3Tests: XCTestCase {
         let a = Vector3D(2.0, 3.0, 4.0)
         let b = Vector3D(3.0, 4.0, 5.0)
         let rejection = a.reject(from: b)
-        XCTAssertNotEqual(a.dotProduct(b), 0.0)
-        XCTAssertEqual(rejection.dotProduct(b), 0.0)
+        XCTAssertNotEqual(a.dot(b), 0.0)
+        XCTAssertEqual(rejection.dot(b), 0.0)
     }
     
     static var allTests = [

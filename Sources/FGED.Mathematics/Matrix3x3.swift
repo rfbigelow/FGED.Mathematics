@@ -43,11 +43,11 @@ extension Matrix3x3 {
     }
     
     var inverse: Self {
-        let r0 = c1.crossProduct(c2)
-        let r1 = c2.crossProduct(c0)
-        let r2 = c0.crossProduct(c1)
+        let r0 = c1.cross(c2)
+        let r1 = c2.cross(c0)
+        let r2 = c0.cross(c1)
         
-        let invDet = Scalar(1) / r2.dotProduct(c2)
+        let invDet = Scalar(1) / r2.dot(c2)
         
         return Self(
             r0.x, r0.y, r0.z,
@@ -90,9 +90,9 @@ extension Matrix3x3 {
         let r0 = Vector(right.c0.x, right.c1.x, right.c2.x)
         let r1 = Vector(right.c0.y, right.c1.y, right.c2.y)
         let r2 = Vector(right.c0.z, right.c1.z, right.c2.z)
-        let m0 = left.c0.outerProduct(r0)
-        let m1 = left.c1.outerProduct(r1)
-        let m2 = left.c2.outerProduct(r2)
+        let m0 = left.c0.outer(r0)
+        let m1 = left.c1.outer(r1)
+        let m2 = left.c2.outer(r2)
         return (m0 + m1 + m2) as! Self
     }
     

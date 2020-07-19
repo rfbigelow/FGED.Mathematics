@@ -207,7 +207,7 @@ final class Matrix3DTests: XCTestCase {
         let b = Matrix3D<Vector3D>.makeRotationZ(radians: Double.pi / 2) * a
         let theta = Double.pi / 4
         let mSkew = Matrix3D<Vector3D>.makeSkew(radians: theta, a: a, b: b)
-        let expected = Matrix3D<Vector3D<Double>>.identity + (a.outerProduct(b) * Double.tan(theta))
+        let expected = Matrix3D<Vector3D<Double>>.identity + (a.outer(b) * Double.tan(theta))
         let diff = mSkew - expected
         let tolerance = Double.ulpOfOne * 2
         XCTAssertLessThanOrEqual(abs(diff[0,0]!), tolerance)

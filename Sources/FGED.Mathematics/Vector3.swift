@@ -25,9 +25,9 @@ protocol Vector3 {
     func magnitude() -> Scalar
     func normalize() -> Self
     
-    func dotProduct(_ other: Self) -> Scalar
-    func crossProduct(_ other: Self) -> Self
-    func outerProduct(_ other: Self) -> Matrix
+    func dot<T>(_ other: T) -> Scalar where T: Vector3, T.Scalar == Scalar
+    func cross<T>(_ other: T) -> Self where T: Vector3, T.Scalar == Scalar
+    func outer<T>(_ other: T) -> Matrix where T: Vector3, T.Scalar == Scalar
     
     func project(onto v: Self) -> Self
     func reject(from v: Self) -> Self
@@ -64,20 +64,20 @@ extension Vector3 {
         return Self(self.storage / self.magnitude())
     }
     
-    func dotProduct(_ other: Self) -> Scalar {
+    func dot<T>(_ other: T) -> Scalar where T: Vector3, T.Scalar == Scalar {
         return (self.storage * other.storage).sum()
     }
 
-    func crossProduct(_ other: Self) -> Self {
+    func cross<T>(_ other: T) -> Self where T: Vector3, T.Scalar == Scalar {
         return Self(self.storage.yzx * other.storage.zxy - self.storage.zxy * other.storage.yzx)
     }
     
-    func outerProduct(_ other: Self) -> Matrix {
+    func outer<T>(_ other: T) -> Matrix  where T: Vector3, T.Scalar == Scalar {
         return Matrix(self * other.x, self * other.y, self * other.z)
     }
     
     func project(onto v: Self) -> Self {
-        return v * (self.dotProduct(v) / v.dotProduct(v))
+        return v * (self.dot(v) / v.dot(v))
     }
     
     func reject(from v: Self) -> Self {
