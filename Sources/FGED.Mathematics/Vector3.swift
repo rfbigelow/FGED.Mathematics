@@ -2,7 +2,7 @@ import RealModule
 
 protocol Vector3 {
     associatedtype Scalar: Real & SIMDScalar
-    associatedtype Matrix: Matrix3x3 where Matrix.Vector == Self
+    associatedtype Matrix: Matrix3x3 where Matrix.Vector.Scalar == Scalar
     
     static var zero: Self { get }
     static var one: Self { get }
@@ -19,6 +19,7 @@ protocol Vector3 {
     
     init(_ simd: SIMD3<Scalar>)
     init(_ x: Scalar, _ y: Scalar, _ z: Scalar)
+    init<T>(_ other: T) where T: Vector3, T.Scalar == Scalar
     
     subscript(index: Int) -> Scalar { get }
     
@@ -73,7 +74,7 @@ extension Vector3 {
     }
     
     func outer<T>(_ other: T) -> Matrix  where T: Vector3, T.Scalar == Scalar {
-        return Matrix(self * other.x, self * other.y, self * other.z)
+        return Matrix(Matrix.Vector(self * other.x), Matrix.Vector(self * other.y), Matrix.Vector(self * other.z))
     }
     
     func project(onto v: Self) -> Self {

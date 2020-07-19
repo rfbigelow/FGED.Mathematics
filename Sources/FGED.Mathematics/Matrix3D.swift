@@ -7,7 +7,9 @@
 
 import RealModule
 
-struct Matrix3D<Vector: Vector3>: Matrix3x3, Equatable where Vector: Equatable {
+struct Matrix3D<T: Real & SIMDScalar>: Matrix3x3, Equatable {
+    typealias Vector = Vector3D<T>
+    
     let c0: Vector
     let c1: Vector
     let c2: Vector

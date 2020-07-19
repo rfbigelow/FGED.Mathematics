@@ -8,7 +8,7 @@
 import RealModule
 
 struct Vector3D<T: Real & SIMDScalar>: Vector3, Equatable {
-    typealias Matrix = Matrix3D<Self>
+    typealias Matrix = Matrix3D<T>
     
     let storage: SIMD3<T>
     
@@ -22,6 +22,10 @@ struct Vector3D<T: Real & SIMDScalar>: Vector3, Equatable {
 
     init(_ x: T, _ y: T, _ z: T) {
         storage = SIMD3<T>(x, y, z)
+    }
+    
+    init<Vector>(_ other: Vector) where Vector:Vector3, Vector.Scalar == T {
+        storage = other.storage
     }
 }
 

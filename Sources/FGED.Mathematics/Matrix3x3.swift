@@ -34,7 +34,7 @@ protocol Matrix3x3 {
     
     static func * (left: Self, right: Self) -> Self
     
-    static func * (left: Self, right: Vector) -> Vector
+    static func * <T>(left: Self, right: T) -> Vector where T: Vector3, T.Scalar == Scalar
 }
 
 extension Matrix3x3 {
@@ -96,7 +96,7 @@ extension Matrix3x3 {
         return (m0 + m1 + m2) as! Self
     }
     
-    static func * (left: Self, right: Vector) -> Vector {
+    static func * <T>(left: Self, right: T) -> Vector where T: Vector3, T.Scalar == Scalar {
         let vx = left.c0 * right.x
         let vy = left.c1 * right.y
         let vz = left.c2 * right.z

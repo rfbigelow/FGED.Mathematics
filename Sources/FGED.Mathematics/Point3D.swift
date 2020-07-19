@@ -10,7 +10,7 @@ import RealModule
 struct Point3D<T: Real & SIMDScalar>: Point3, Equatable {
     typealias Scalar = T
     typealias Vector = Vector3D<T>
-    typealias Matrix = Matrix3D<Self>
+    typealias Matrix = Matrix3D<T>
     
     static var zero: Point3D<T> { return Self(SIMD3.zero) }
     
@@ -22,5 +22,9 @@ struct Point3D<T: Real & SIMDScalar>: Point3, Equatable {
     
     init(_ x: T, _ y: T, _ z: T) {
         storage = SIMD3<T>(x, y, z)
+    }
+    
+    init<Vector>(_ other: Vector) where Vector:Vector3, Vector.Scalar == T {
+        storage = other.storage
     }
 }
