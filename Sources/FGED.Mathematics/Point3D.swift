@@ -24,7 +24,11 @@ struct Point3D<T: Real & SIMDScalar>: Point3, Equatable {
         storage = SIMD3<T>(x, y, z)
     }
     
-    init<Vector>(_ other: Vector) where Vector:Vector3, Vector.Scalar == T {
-        storage = other.storage
+    init<Vector>(_ v: Vector) where Vector:Vector3, Vector.Scalar == T {
+        storage = v.storage
+    }
+    
+    func asVector() -> Vector {
+        return unsafeBitCast(self, to: Vector.self)
     }
 }

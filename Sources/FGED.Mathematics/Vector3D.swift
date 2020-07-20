@@ -24,8 +24,8 @@ struct Vector3D<T: Real & SIMDScalar>: Vector3, Equatable {
         storage = SIMD3<T>(x, y, z)
     }
     
-    init<Vector>(_ other: Vector) where Vector:Vector3, Vector.Scalar == T {
-        storage = other.storage
+    init<Vector>(_ v: Vector) where Vector:Vector3, Vector.Scalar == T {
+        storage = v.storage
     }
 }
 

@@ -19,7 +19,7 @@ protocol Vector3 {
     
     init(_ simd: SIMD3<Scalar>)
     init(_ x: Scalar, _ y: Scalar, _ z: Scalar)
-    init<T>(_ other: T) where T: Vector3, T.Scalar == Scalar
+    init<T>(_ v: T) where T: Vector3, T.Scalar == Scalar
     
     subscript(index: Int) -> Scalar { get }
     

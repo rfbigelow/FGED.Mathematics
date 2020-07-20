@@ -10,6 +10,8 @@ protocol Point3: Vector3 {
     
     static func + (left: Self, right: Vector) -> Self
     static func - (left: Self, right: Self) -> Vector
+    
+    func asVector() -> Vector
 }
 
 extension Point3 {
