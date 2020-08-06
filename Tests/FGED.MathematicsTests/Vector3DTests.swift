@@ -146,6 +146,22 @@ final class Vector3Tests: XCTestCase {
         XCTAssertEqual(rejection.dot(b), 0.0)
     }
     
+    func testNormalTransform() {
+        let v1a = Vector3D(1, 0, 0)
+        let v2a = Vector3D(0, 1, 0)
+        let m = Matrix3D.makeScale(sx: 2, sy: 1, sz: 1)
+        let v1b = m * v1a
+        let v2b = m * v2a
+        let nb = v1b.cross(v2b)
+               
+        let h = Transform4D(m, Point3D(SIMD3<Double>()))
+        let na = nb * h
+
+        let mInv = m.inverse
+        let naExpected = Vector3D(nb.dot(mInv[0]!), nb.dot(mInv[1]!), nb.dot(mInv[2]!))
+        XCTAssertEqual(na, naExpected)
+    }
+    
     static var allTests = [
         ("testDefaultInitializer", testDefaultInitializer),
         ("testInitializer", testInitializer)

@@ -33,14 +33,30 @@ protocol Vector3 {
     func project(onto v: Self) -> Self
     func reject(from v: Self) -> Self
     
-    static func * (left: Self, right: Scalar) -> Self
-    static func / (left: Self, right: Scalar) -> Self
+    /// Multiplies all components of the vector by the given scalar.
+    static func * (v: Self, s: Scalar) -> Self
     
+    /// Divides all components of the vector by the given scalar.
+    static func / (v: Self, s: Scalar) -> Self
+    
+    /// Negates the vector v.
     static prefix func - (v: Self) -> Self
     
+    /// Pointwise addition.
     static func + (left: Self, right: Self) -> Self
+    
+    /// Pointwise subtraction.
     static func - (left: Self, right: Self) -> Self
+    
+    /// Pointwise multiplication.
     static func * (left: Self, right: Self) -> Self
+    
+    /// Transforms a normal vector from coordinate system B to coordinate system A using the homogeneous transform from A to B.
+    ///
+    /// Normal vectors are multiplied on the right, since they represent inverse distances. To transform a normal vector from coordinate
+    /// system A to B, the inverse of the transform is required. This operator does not compute the inverse, so it goes in the opposite
+    /// direction.
+    static func * <T>(normal: Self, transform: T) -> Self where T: Transform4x4, T.Scalar == Scalar
 }
 
 extension Vector3 {
@@ -85,12 +101,12 @@ extension Vector3 {
         return self - project(onto: v)
     }
     
-    static func * (left: Self, right: Scalar) -> Self {
-        return Self(left.storage * right)
+    static func * (v: Self, s: Scalar) -> Self {
+        return Self(v.storage * s)
     }
     
-    static func / (left: Self, right: Scalar) -> Self {
-        return Self(left.storage / right)
+    static func / (v: Self, s: Scalar) -> Self {
+        return Self(v.storage / s)
     }
     
     static prefix func - (v: Self) -> Self {
@@ -107,5 +123,12 @@ extension Vector3 {
 
     static func * (left: Self, right: Self) -> Self {
         return Self(left.storage * right.storage)
+    }
+    
+    static func * <T>(normal: Self, transform: T) -> Self where T: Transform4x4, T.Scalar == Scalar {
+        let c0 = transform[0]!
+        let c1 = transform[1]!
+        let c2 = transform[2]!
+        return Self(normal.dot(c0), normal.dot(c1), normal.dot(c2))
     }
 }
