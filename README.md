@@ -12,10 +12,24 @@ Having a cross-platform library for game maths is an important first step in cre
 
 Volume 2: Rendering will represent a significant engineering challenge to me, since I'll need to figure out the best way to abstract the graphics API.  
 
-## What's in it?
+## Protocols
+
+The following types are modeled with protocols to support inheritence where needed (e.g. for vectors and points.) Where possible, implementation is provided with the protocol definition. Note that in order to implement these protocols you must provide a complete set of concrete types that rely on each other (e.g. vector, point, matrix) since all the associated types must match for a given implementation. Fortunately a complete set of types are provided (see the Structs section below.)
 
 - Vector3: 3-dimensional vectors, with scalar and vector addition and subtraction, dot product, cross product, triple scalar product, and point-wise multiplication.
-- Matrix3D: 3x3 matrices, with support for matrix addition, subtraction, multiplication, inverses, matrix-vector multiplication, and transform matrices.
+- Point3: 3-dimensional points, representing a location in space. Subtracting 2 points produces a vector. Translating a point with a vector produces a point.
+- Matrix3x3: 3x3 matrices, with support for matrix addition, subtraction, multiplication, inverses, matrix-vector multiplication, and transform matrices.
+- Transform4x4: 4x4 transformation matrices for homogeneous coordinates.
+
+## Structs
+
+Concrete types are provided by implementing the above protocols with structs. The idea is to provide value semantics, and to allow these types to be efficiently laid out in memory. In general, client code will use these concrete types, while library code should use the protocols.
+
+- Vector3D: An implementation of Vector3 that uses SIMD3<T> as storage.
+- Point3D: An implementation of Point3 that uses SIMD3<T> as storage.
+- Matrix3D: An implementation of Matrix 3x3 that stores its data as Vector3D column vectors.
+- Quaternion: A geometric object commonly used to perform rotations. SIMD4<T> used as storage.
+- Transform4D: An implementation of Transform4x4 that is composed of a Matrix3D and Point3D.
 
 ## Design Choices
 

@@ -33,6 +33,14 @@ func scalarTripleProduct<T: SIMDScalar & FloatingPoint>(_ a: Vector3D<T>, _ b: V
     return a.cross(b).dot(c)
 }
 
+#if !(os(macOS) || os(iOS) && targetEnvironment(macCatalyst))
+extension Float16 {
+    static func * (s: Float16, v: Vector3D<Float16>) -> Vector3D<Float16> {
+        return v * s
+    }
+}
+#endif
+
 extension Float32 {
     static func * (s: Float32, v: Vector3D<Float32>) -> Vector3D<Float32> {
         return v * s
